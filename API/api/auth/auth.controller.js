@@ -1,29 +1,20 @@
-module.exports.controller = function(app, router, config, modules, models, middlewares, sessions) {
+module.exports = function (app, router, config, modules, models, middlewares) {
 
-	app.get('/auth/user', middlewares.checkAuth, function(req, res, next) {
-		res.json({
-			"success": true,
-			"data": req.user
-		});
+	app.get('/auth/user', middlewares.checkAuth, function (req, res, next) {
+		res.success(req.user);
 	});
 
 
 	/** auth LOCAL **/
-	app.post('/auth/local', function(req, res, next) {
-		modules.passport.authenticate('local', {}, function(err, user, info) {
+	app.post('/auth/local', function (req, res, next) {
+		modules.passport.authenticate('local', {}, function (err, user, info) {
 			if (err || !user) {
-				return res.json({
-					"success": false,
-					"error": "Invalid email / password."
-				});
+				return res.error('Invalid email / password');
 			}
-			req.login(user, function(err) {
+			req.login(user, function (err) {
 				if (err) return next(err);
-				return res.json({
-					"success": true,
-					"data": {
-						token: user.currentToken
-					}
+				return res.success({
+					token: user.currentToken
 				});
 			});
 		})(req, res, next);
@@ -37,15 +28,15 @@ module.exports.controller = function(app, router, config, modules, models, middl
 		scope: ['https://www.googleapis.com/auth/plus.login', 'https://www.googleapis.com/auth/plus.me', 'https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile']
 	}));
 
-	app.get('/auth/google/callback', middlewares.populateUser, function(req, res, next) {
+	app.get('/auth/google/callback', middlewares.populateUser, function (req, res, next) {
 		modules.passport.authenticate('google', {
 			failureRedirect: '/#/auth/error'
-		}, function(err, user) {
+		}, function (err, user) {
 			if (err || !user) {
 				console.log(err);
 				return res.redirect('/#/auth/error');
 			}
-			req.login(user, function(err) {
+			req.login(user, function (err) {
 				if (err) {
 					return next(err);
 				}
@@ -63,14 +54,14 @@ module.exports.controller = function(app, router, config, modules, models, middl
 		scope: ['email', 'user_location']
 	}));
 
-	app.get('/auth/facebook/callback', middlewares.populateUser, function(req, res, next) {
+	app.get('/auth/facebook/callback', middlewares.populateUser, function (req, res, next) {
 		modules.passport.authenticate('facebook', {
 			failureRedirect: '/#/auth/error'
-		}, function(err, user) {
+		}, function (err, user) {
 			if (err || !user) {
 				return res.redirect('/#/auth/error');
 			}
-			req.login(user, function(err) {
+			req.login(user, function (err) {
 				if (err) {
 					return next(err);
 				}
@@ -84,14 +75,14 @@ module.exports.controller = function(app, router, config, modules, models, middl
 	 **/
 	app.get('/auth/twitter', middlewares.populateUser, modules.passport.authenticate('twitter'));
 
-	app.get('/auth/twitter/callback', middlewares.populateUser, function(req, res, next) {
+	app.get('/auth/twitter/callback', middlewares.populateUser, function (req, res, next) {
 		modules.passport.authenticate('twitter', {
 			failureRedirect: '/#/auth/error'
-		}, function(err, user) {
+		}, function (err, user) {
 			if (err || !user) {
 				return res.redirect('/#/auth/error');
 			}
-			req.login(user, function(err) {
+			req.login(user, function (err) {
 				if (err) return next(err);
 				return res.redirect('/#/auth/success/' + user.currentToken);
 			});
@@ -101,34 +92,27 @@ module.exports.controller = function(app, router, config, modules, models, middl
 	/**
 	 * LOGOUT
 	 **/
-	app.get('/auth/logout', middlewares.checkAuth, function(req, res, next) {
+	app.get('/auth/logout', middlewares.checkAuth, function (req, res, next) {
 		modules.async.waterfall([
-				// Get the token
-				function(callback) {
-					models.Token.findOne({
-						_user: req.user._id,
-						archived: false
-					}, callback);
-				},
-				// Archive it
-				function(token, callback) {
-					if (!token) return res.json({
-						success: true
-					});
-					token.archived = true;
-					token.save(function(err) {
-						if (err) callback(err);
-						return res.json({
-							success: true
-						});
-					});
-				}
-			],
-			function(err) {
-				if (err) return res.json({
-					success: false,
-					err: err
+			// Get the token
+			function (callback) {
+				models.Token.findOne({
+					_user: req.user._id,
+					archived: false
+				}, callback);
+			},
+			// Archive it
+			function (token, callback) {
+				if (!token) return res.success();
+				token.archived = true;
+				token.save(function (err) {
+					if (err) callback(err);
+					return res.success();
 				});
+			}
+		],
+			function (err) {
+				if (err) return res.error(err);
 			});
 	});
 };

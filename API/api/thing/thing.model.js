@@ -1,6 +1,6 @@
-var mongoose = require('./Db.js').mongoose;
+var mongoose = require('mongoose');
 
-var thingSchema = new mongoose.Schema({
+var schema = new mongoose.Schema({
 	title: {
 		type: String
 	},
@@ -63,5 +63,7 @@ var thingSchema = new mongoose.Schema({
 	updated: Date
 });
 
-var thingModel = mongoose.model('Thing', thingSchema);
-exports.Thing = thingModel;
+
+var Thing = mongoose.model('Thing', schema);
+
+module.exports = Thing;
