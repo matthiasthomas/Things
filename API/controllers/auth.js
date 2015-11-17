@@ -112,22 +112,23 @@ module.exports.controller = function(app, router, config, modules, models, middl
 				},
 				// Archive it
 				function(token, callback) {
-					if (!token) return res.json({
-						success: true
-					});
+					if (!token) return callback(null);
 					token.archived = true;
 					token.save(function(err) {
-						if (err) callback(err);
-						return res.json({
-							success: true
-						});
+						if (err) return callback(err);
+						return callback(null);
 					});
 				}
 			],
-			function(err) {
-				if (err) return res.json({
-					success: false,
-					err: err
+			function(err, success) {
+				if (err) {
+					return res.json({
+						success: false,
+						err: err
+					});
+				}
+				return res.json({
+					success: true
 				});
 			});
 	});
