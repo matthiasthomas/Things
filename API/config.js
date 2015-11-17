@@ -1,42 +1,45 @@
-/**
- * CONFIG
- **/
-var profile = "DEV"; // DEV / PROD
-process.argv.forEach(function(arg) {
-	if (arg == "PROD" ||  arg == "DEV") {
-		profile = arg;
+"use strict";
+var path = require("path");
+var _ = require("lodash");
+
+var env = process.env.NODE_ENV || 'DEV';
+process.argv.forEach(function (arg) {
+	if (arg == "PROD" || arg == "TEST") {
+		env = arg
 	}
 });
 
-var config = {
-	ttlToken: 7200, //2h
-	debug: profile == "DEV" ? true : false,
-	salt: "d6jn$xvuR2y$JWhYgXqu9$Rm8oqhW",
-	rootDirectory: __dirname,
-	server: {
-		address: profile == "DEV" ? 'localhost' : '176.31.167.154',
-		port: profile == "DEV" ? '8080' : '80'
-	},
-	storageDirectory: __dirname + "/data",
-	profile: profile
-};
+var base = {
+	root: path.normalize(path.join(__dirname, '/..')),
+	env: env,
+	ttlToken: 7200, //2H
+	address: env == "PROD" ? '176.31.167.154' : 'localhost',
+	port: env == "PROD" ? '80' : '8080',
+	storage: __dirname + "/data",
+}
 
 // Pictures properties
-config.thumbnailsDirectory = config.storageDirectory + "/thumbnails";
-config.tmpDirectory = config.storageDirectory + "/.tmp";
-config.thumbnailsSize = "300x?"; //Eg: 300x300, 300x?, ?x300
-config.picturesDirectory = config.storageDirectory + "/pictures";
+base.thumbnailsDirectory = base.storage + "/thumbnails";
+base.tmpDirectory = base.storage + "/.tmp";
+base.thumbnailsSize = "300x?"; //Eg: 300x300, 300x?, ?x300
+base.picturesDirectory = base.storage + "/pictures";
 
-// oAuth properties
-config.oauth = {
-	google: {
-		clientId: "692138578031-avhpmuvu7g92kkrdl8pav3katk3n9asa.apps.googleusercontent.com",
-		clientSecret: "w3mv2HIeIpFVu6MImZB_oUr6"
+var specific = {
+	DEV: {
+		salt: "d6jn$xvuR2y$JqhYgXqu9$RmD6qhW",
+		database: 'mongodb://127.0.0.1:27017/things_dev',
+		debug: true
 	},
-	facebook: {
-		clientId: "718430748292626",
-		clientSecret: "a0799427bf154a5a38e2d159f7ffbe4c"
-	}
+	TEST: {
+		salt: "d6jn$xvuR2y$JWhYgXqsq8$Rm8oqhW",
+		database: 'mongodb://127.0.0.1:27017/things_test',
+		debug: true
+	},
+	PROD: {
+		salt: "d6jn$xvuR2y$TYUYgXqu9$Rm8oqhW",
+		database: 'mongodb://127.0.0.1:27017/things',
+		debug: false
+	},
 };
 
-exports.config = config;
+module.exports = _.merge(base, specific[env]);

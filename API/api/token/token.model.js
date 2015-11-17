@@ -1,7 +1,7 @@
-var mongoose = require('./Db.js').mongoose;
-var config = require("../config.js").config;
+var mongoose = require('mongoose');
+var config = require("../../config.js");
 
-var tokenSchema = new mongoose.Schema({
+var schema = new mongoose.Schema({
 	_user: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User'
@@ -18,13 +18,15 @@ var tokenSchema = new mongoose.Schema({
 	}
 });
 
-tokenSchema.methods.isAlive = function() {
+schema.methods.isAlive = function () {
 	return (this.expiration >= Math.round(+new Date() / 1000));
 };
 
-tokenSchema.methods.renew = function(callback) {
+schema.methods.renew = function (callback) {
 	this.expiration = Math.round(+new Date() / 1000) + config.ttlToken;
 	this.save(callback);
 };
 
-exports.Token = mongoose.model('Token', tokenSchema);
+var Token = mongoose.model('Token', schema);
+
+module.exports = Token;
