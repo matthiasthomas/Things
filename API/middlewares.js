@@ -13,7 +13,7 @@ module.exports.controller = function(app, config, modules, models, middlewares, 
 		models.Token.findOne({
 			key: key,
 			archived: false
-		}).populate('_user').exec(function(error, token) {
+		}).populate('_user', 'email currentToken profile').exec(function(error, token) {
 			if (error || !token) return callback("Invalid Token");
 			return callback(null, token);
 		});

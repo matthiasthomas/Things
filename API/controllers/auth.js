@@ -1,29 +1,10 @@
 module.exports.controller = function(app, router, config, modules, models, middlewares, sessions) {
 
 	app.get('/auth/user', middlewares.checkAuth, function(req, res, next) {
-		var id = req.user._id;
-		models.User.findOne({
-				_id: id
-			})
-			.select("_id firstname lastname email birthdate")
-			.exec(function(err, user) {
-				if (err) {
-					if (config.debug === true) {
-						console.log({
-							"error_GET_auth/user": err
-						});
-					}
-					res.json({
-						"success": false,
-						"error": "An error occurred."
-					});
-				} else {
-					res.json({
-						"success": true,
-						"data": user
-					});
-				}
-			});
+		res.json({
+			"success": true,
+			"data": req.user
+		});
 	});
 
 
