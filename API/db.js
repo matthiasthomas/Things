@@ -1,5 +1,5 @@
 var chalk = require("chalk");
-var config = require(__dirname + "/config.js");
+var config = require(__dirname + '/config');
 var mongoose = require('mongoose');
 
 mongoose.connect(config.database);
