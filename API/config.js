@@ -9,7 +9,7 @@ process.argv.forEach(function(arg) {
 });
 
 var config = {
-	ttlToken: 7200, //1h
+	ttlToken: 7200, //2h
 	debug: profile == "DEV" ? true : false,
 	salt: "d6jn$xvuR2y$JWhYgXqu9$Rm8oqhW",
 	rootDirectory: __dirname,
@@ -21,7 +21,7 @@ var config = {
 	profile: profile
 };
 
-// Video properties
+// Pictures properties
 config.thumbnailsDirectory = config.storageDirectory + "/thumbnails";
 config.tmpDirectory = config.storageDirectory + "/.tmp";
 config.thumbnailsSize = "300x?"; //Eg: 300x300, 300x?, ?x300

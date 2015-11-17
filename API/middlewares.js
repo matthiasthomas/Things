@@ -9,69 +9,55 @@ module.exports.controller = function(app, config, modules, models, middlewares, 
 		return -1;
 	}
 
+	function getTokenByKey(key, callback) {
+		models.Token.findOne({
+			key: key,
+			archived: false
+		}).populate('_user').exec(function(error, token) {
+			if (error || !token) return callback("Invalid Token");
+			return callback(null, token);
+		});
+	}
+
 	// To check wether the user is authenticated or not
 	exports.checkAuth = function(req, res, next) {
 		// Get the token from the request headers
-		var token = req.headers["x-access-token"];
-		// Get the token's session's index
-		var sessionIndex = getSessionIndexByToken(token);
-		if (sessionIndex >= 0) {
+		var key = req.headers["x-access-token"];
+		getTokenByKey(key, function(error, token) {
+			if (error ||  !token) return res.status(401).end();
 			// Check if it's still alive
-			if (sessions[sessionIndex].ttl >= Math.round(+new Date() / 1000)) {
-				// Get the corresponding user from the db
-				models.User.findOne({
-						_id: sessions[sessionIndex].userId
-					})
-					.exec(function(error, user) {
-						if (!user) return res.status(401).end();
-						// If a user was found, extend it's session
-						sessions[sessionIndex].ttl = Math.round(+new Date() / 1000) + config.ttlToken;
-						// Add user object to the request, and next
-						req.user = user;
-						return next();
-					});
-				return;
+			if (token.isAlive()) {
+				token.renew(function(error) {
+					if (error) return res.send(error);
+					// Add user object to the request, and next
+					req.user = token._user;
+					return next();
+				});
 			} else {
-				// If the session is out of date, delete it
-				sessions.splice(i, 1);
 				return res.status(401).end();
 			}
-		} else {
-			return res.status(401).end();
-		}
+		});
 	};
 
-	exports.getUser = function(req, res, next) {
-		if (!req.things) req.things = {};
-		// Get the token for the headers
-		var token = req.headers["x-access-token"] || req.params.token;
-		// Check the token
-		if (token) {
-			var sessionIndex = getSessionIndexByToken(token);
-			if (sessionIndex >= 0) {
-				if (sessions[sessionIndex].ttl >= Math.round(+new Date() / 1000)) {
-					// Get the user associated to the session
-					models.User.findOne({
-							_id: sessions[sessionIndex].userId
-						})
-						.exec(function(error, user) {
-							if (user) {
-								req.things.user = user._id;
-							}
-							next();
-						});
-					// If the session is expired
-				} else {
-					next();
-				}
-				// If the token doesn't correspond to any session
+	// Same as checkAuth but won't return a 401;
+	// It will just next() with an empty req.user if no user was connected
+	exports.populateUser = function(req, res, next) {
+		// Get the token from the request headers
+		var key = req.headers["x-access-token"];
+		getTokenByKey(key, function(error, token) {
+			if (error ||  !token) return next();
+			// Check if it's still alive
+			if (token.isAlive()) {
+				token.renew(function(error) {
+					if (error) return res.send(error);
+					// Add user object to the request, and next
+					req.user = token._user;
+					return next();
+				});
 			} else {
-				next();
+				return next();
 			}
-			// If there's no token in the headers
-		} else {
-			next();
-		}
+		});
 	};
 
 	exports.getIP = function(req, res, next) {

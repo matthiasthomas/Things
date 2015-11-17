@@ -9,10 +9,9 @@ var config = require(__dirname + "/config.js").config;
 var modules = {
 	async: require('async'),
 	fs: require("fs"),
-	auth: require(__dirname + "/auth.js"),
+	passport: require(__dirname + "/config/passport.js").passport,
 	bcrypt: require("bcrypt-nodejs")
 };
-var sessions = modules.auth.sessions;
 
 
 /**
@@ -45,8 +44,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
 	extended: true
 }));
-app.use(modules.auth.initialize());
-app.use(modules.auth.session());
+app.use(modules.passport.initialize());
+app.use(modules.passport.session());
 if (!config.debug) {
 	app.use(morgan('combined', {}));
 	app.use(errorHandler());
@@ -56,13 +55,13 @@ if (!config.debug) {
  * MIDDLEWARES
  **/
 var middlewares = require(__dirname + "/middlewares.js");
-middlewares.controller(app, config, modules, models, middlewares, sessions);
+middlewares.controller(app, config, modules, models, middlewares);
 app.all("*", middlewares.header);
 
 // Multipart form (for file upload)
 app.use(multer({
 	dest: config.tmpDirectory
-}));
+}).single('photo'));
 
 /**
  * CONTROLLERS
@@ -70,7 +69,7 @@ app.use(multer({
 modules.fs.readdirSync(__dirname + "/controllers").forEach(function(file) {
 	if (file.substr(-3) == ".js") {
 		route = require(__dirname + "/controllers/" + file);
-		route.controller(app, router, config, modules, models, middlewares, sessions);
+		route.controller(app, router, config, modules, models, middlewares);
 	}
 });
 
