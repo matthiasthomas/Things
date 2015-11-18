@@ -1,11 +1,11 @@
-"use strict";
+// "use strict";
 var path = require("path");
 var _ = require("lodash");
 
 var env = process.env.NODE_ENV || 'DEV';
-process.argv.forEach(function (arg) {
+process.argv.forEach(function(arg) {
 	if (arg == "PROD" || arg == "TEST") {
-		env = arg
+		env = arg;
 	}
 });
 
@@ -15,13 +15,8 @@ var base = {
 	ttlToken: 7200, //2H
 	address: env == "PROD" ? '176.31.167.154' : 'localhost',
 	port: env == "PROD" ? '80' : '8080',
-<<<<<<< HEAD:API/config.js
-	storage: __dirname + "/data",
-};
-=======
 	storage: path.join(__dirname, '../', 'data'),
-}
->>>>>>> 7b7f5f0f18ccde6b8d5bba205eb4edc21e26b2f3:API/config/index.js
+};
 
 // Pictures properties
 base.thumbnailsDirectory = base.storage + "/thumbnails";
