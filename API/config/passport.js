@@ -1,4 +1,4 @@
-var config = require("../config.js");
+var config = require('../config');
 var _ = require('lodash');
 var passport = require('passport');
 var InstagramStrategy = require('passport-instagram').Strategy;

@@ -24,7 +24,7 @@ var _ = require('lodash'),
 /**
  * CONFIG
  **/
-var config = require(__dirname + "/config.js");
+var config = require(__dirname + '/config');
 
 /**
  * PASSPORT
@@ -82,8 +82,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '/../client/')));
 // Router
 var router = express.Router();
-// Prefix
-// all of our routes will be prefixed with /api
+// Prefix all of our routes will be prefixed with /api
 app.use('/api', router);
 // Passport
 app.use(passport.initialize());
@@ -113,26 +112,40 @@ if (config.debug) {
 /**
  * MIDDLEWARES
  **/
-var middlewares = require(__dirname + "/middlewares.js");
-console.log(middlewares);
-middlewares.controller(app, config, modules, models, middlewares);
-app.all("*", middlewares.catch);
-app.all("*", middlewares.header);
+
+var middlewares = {};
+try {
+    fs.readdirSync(path.join(__dirname, '/api/middleware')).forEach(function (name) {
+        if (name != '.DS_Store') {
+            // load middleware
+            var middleware = require('./api/middleware/' + name)(app, config, models, modules);
+            if (typeof middleware !== 'function') {
+                _.extend(middlewares, middleware);
+            } else {
+                app.all("*", middleware);
+                router.use(middleware);
+            }
+        }
+    });
+} catch (err) {
+    console.error(err);
+}
 
 /**
  * CONTROLLERS
  **/
-fs.readdirSync(path.join(__dirname, '/api/')).forEach(function (dir) {
-    if (dir != '.DS_Store') {
-        var path = __dirname + '/api/' + dir + '/' + dir + '.controller.js';
-        if (fs.existsSync(path)) {
-            require(path)(app, router, config, modules, models, middlewares);
-        }
-    }
-});
-
+var controllers = {};
 try {
-
+    fs.readdirSync(path.join(__dirname, '/api/')).forEach(function (dir) {
+        if (dir != '.DS_Store') {
+            var path = __dirname + '/api/' + dir + '/' + dir + '.controller.js';
+            if (fs.existsSync(path)) {
+                // load controllers
+                var controller = require(path)(app, router, config, modules, models, middlewares);
+                _.extend(controllers, controller);
+            }
+        }
+    });
 } catch (err) {
     console.error(err);
 }
@@ -194,7 +207,7 @@ async.series([
  * Socket.io
  */
 var server = http.createServer(app);
-/*
+
 var io = socket(server);
 var onlineUsers = 0;
 
@@ -208,19 +221,13 @@ io.sockets.on('connection', function (socket) {
         io.sockets.emit('onlineUsers', { onlineUsers: onlineUsers });
     });
 });
-*/
 
-// Start
+/**
+ * Start
+ */
 server.listen(app.get('port'), function () {
+    middlewares.getRoute();
     console.log(chalk.bold.yellow('          ***** Things *****'));
-    app._router.stack.forEach(function (middleware) {
-        if (middleware.route) { // routes registered directly on the app
-            if (middleware.route.path != '*') {
-                console.log(chalk.green('Load route'), chalk.cyan(Object.keys(middleware.route.methods)), chalk.cyan(middleware.route.path));
-
-            }
-        }
-    });
     console.log(chalk.green('Start time: '), chalk.cyan(new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')));
     console.log(chalk.green('Environement:'), chalk.cyan(config.env));
     console.log(chalk.green('The server is listening on '), config.address + ":" + chalk.cyan(app.get('port')));

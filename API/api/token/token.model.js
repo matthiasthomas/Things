@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var config = require("../../config.js");
+var config = require('../../config');
 
 var schema = new mongoose.Schema({
 	_user: {
