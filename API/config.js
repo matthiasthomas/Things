@@ -16,7 +16,7 @@ var base = {
 	address: env == "PROD" ? '176.31.167.154' : 'localhost',
 	port: env == "PROD" ? '80' : '8080',
 	storage: __dirname + "/data",
-}
+};
 
 // Pictures properties
 base.thumbnailsDirectory = base.storage + "/thumbnails";
