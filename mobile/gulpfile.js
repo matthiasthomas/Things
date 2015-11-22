@@ -25,7 +25,7 @@ var path = {
   dist: 'www/dist/',
   src: {
     js: ['www/src/app.js', 'www/src/**/*.js'],
-    style: ['www/src/**/*.scss', './scss/**/*.scss'],
+    style: ['./scss/**/*.scss'],
     img: 'www/src/img/**/*.*',
     fonts: 'www/src/fonts'
   }
@@ -37,7 +37,7 @@ var tasks = {
     gulp.src(path.src.style)
       .pipe(sass())
       .on('error', sass.logError)
-      .pipe(concat('style.' + config.pkg.version))
+      .pipe(concat('style'))
       .pipe(minifyCss({
         keepSpecialComments: 0
       }))

@@ -1,7 +1,11 @@
 angular.module('app').config(function ($stateProvider) {
-    $stateProvider.state('home', {
+    $stateProvider.state('app.home', {
 		url: '/home',
-		templateUrl: 'js/home/home.html',
-		controller: 'HomeCtrl'
+		views: {
+			'menuContent': {
+				templateUrl: 'src/home/home.html',
+				controller: 'HomeCtrl'
+			}
+		}
 	});
 });

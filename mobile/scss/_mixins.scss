@@ -1,0 +1,118 @@
+
+/*---------*\
+    Mixins
+/*---------*/
+
+@mixin clearfix {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+/** 
+*	Radial Gradient Background  
+*	@include bg-radial(#FFEB3B, 0%, #F44336, 100%)
+**/
+@mixin bg-radial($start-colour, $start-position, $end-colour, $end-position) {
+    background: -moz-radial-gradient(center, ellipse cover, $start-colour $start-position, $end-colour $end-position);
+    background: -webkit-gradient(radial, center center, 0px, center center, 100%, Colour-stop($start-position,$start-colour), Colour-stop($end-position,$end-colour));
+    background: -webkit-radial-gradient(center, ellipse cover, $start-colour $start-position,$end-colour $end-position);
+    background: -o-radial-gradient(center, ellipse cover, $start-colour $start-position,$end-colour $end-position);
+    background: -ms-radial-gradient(center, ellipse cover, $start-colour $start-position,$end-colour $end-position);
+    background: radial-gradient(ellipse at center, $start-colour $start-position,$end-colour $end-position);
+}
+
+/**
+*	Background Gradient: Top to Bottom
+*	@include bg-gradient-t2b(start colour, end colour);
+**/
+@mixin bg-gradient-t2b($start-colour, $end-colour) {
+	background-color: $start-colour;
+	background-image: -webkit-gradient(linear, left top, left bottom, from($start-colour), to($end-colour));
+	background-image: -webkit-linear-gradient(top, $start-colour, $end-colour);
+	background-image:    -moz-linear-gradient(top, $start-colour, $end-colour);
+	background-image:     -ms-linear-gradient(top, $start-colour, $end-colour);
+	background-image:      -o-linear-gradient(top, $start-colour, $end-colour);
+	background-image:         linear-gradient(top, $start-colour, $end-colour);
+	filter:            progid:DXImageTransform.Microsoft.gradient(start-colourStr='#{$start-colour}', end-colourStr='#{$end-colour}');
+}
+
+
+/**
+*	Background Gradient: Left to Right
+*	@include bg-gradient-l2r(#fff, #000);
+**/
+@mixin bg-gradient-l2r($start-colour, $end-colour) {
+    background-color: $start-colour;
+    background-image: -webkit-gradient(linear, left top, right top, from($start-colour), to($end-colour));
+    background-image: -webkit-linear-gradient(left, $start-colour, $end-colour);
+    background-image:    -moz-linear-gradient(left, $start-colour, $end-colour);
+    background-image:     -ms-linear-gradient(left, $start-colour, $end-colour);
+    background-image:      -o-linear-gradient(left, $start-colour, $end-colour);
+    background-image:         linear-gradient(left, $start-colour, $end-colour);
+    filter:            progid:DXImageTransform.Microsoft.gradient(start-colourStr='#{$start-colour}', end-colourStr='#{$end-colour}', gradientType='1');
+}
+
+
+/**
+*	Vendor prefixing for shorthand properties
+*	@include vendor-prefixes(border-radius, 5px);
+**/ 
+@mixin vendor-prefixes($property, $value) {
+        -webkit-#{$property}: $value;
+        -moz-#{$property}: $value;
+        -ms-#{$property}: $value;
+        -o-#{$property}: $value;
+}
+
+
+/**
+*	Media Query mixin
+*	@include(xs, landscape)
+**/
+@mixin mq($res-min, $orientation: false) {
+	$mq-xs: "screen and (max-width: 767px)";
+  	$mq-sm: "screen and (min-width: 768px) and (max-width: 991px)";
+  	$mq-md: "screen and (min-width: 992px) and (max-width: 1199px)";
+ 	$mq-lg: "screen and (min-width: 1200px)";
+  
+	@if $orientation {
+		@if $res-min == xs {
+			@media #{$mq-xs} and (orientation:#{$orientation}) {
+				@content;
+			}
+		}
+		@else if $res-min == sm {
+			@media #{$mq-sm} and (orientation:#{$orientation}) {
+				@content;
+			}
+		}
+		@else if $res-min == md {
+			@media #{$mq-md} and (orientation:#{$orientation}) {
+				@content;
+			}
+		}
+		@else if $res-min == lg {
+			@media #{$mq-lg} and (orientation:#{$orientation}) {
+				@content;
+			}
+		}
+	}
+	@else {
+		@if $res-min == xs {
+			@media #{$mq-xs} { @content; }
+		}
+		@else if $res-min == sm {
+			@media #{$mq-sm} { @content; }
+		}
+		@else if $res-min == md {
+			@media #{$mq-md}  { @content; }
+		}
+		@else if $res-min == lg {
+			@media #{$mq-lg}  { @content; }
+		}
+	}
+  
+}
