@@ -1,7 +1,7 @@
 angular.module('app').config(function ($stateProvider) {
     $stateProvider.state('map', {
-        url: '/map',
+        url: '/',
         templateUrl: 'js/map/map.html',
-        controller: 'MapCtrl',
+        controller: 'MapCtrl'
     });
 });
