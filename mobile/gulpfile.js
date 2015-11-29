@@ -4,7 +4,7 @@ var bower = require('bower');
 var concat = require('gulp-concat');
 var header = require('gulp-header');
 var footer = require('gulp-footer');
-var sass = require('gulp-sass');
+var sass = require('gulp-ruby-sass');
 var minifyCss = require('gulp-minify-css');
 var rename = require('gulp-rename');
 var sh = require('shelljs');
@@ -25,7 +25,7 @@ var path = {
   dist: 'www/dist/',
   src: {
     js: ['www/src/app.js', 'www/src/**/*.js'],
-    style: ['./scss/**/*.scss'],
+    style: ['./scss/**/*.scss', './www/src/**/*.scss'],
     img: 'www/src/img/**/*.*',
     fonts: 'www/src/fonts'
   }
@@ -34,8 +34,13 @@ var path = {
 var tasks = {
 
   sass: function (done) {
-    gulp.src(path.src.style)
-      .pipe(sass())
+    return sass('./scss/ionic.app.scss', {
+          compass: true,
+          stopOnError: false,
+          sourcemap: true,
+          noCache: true,
+          style: 'compact'
+      })
       .on('error', sass.logError)
       .pipe(concat('style'))
       .pipe(minifyCss({
@@ -43,7 +48,6 @@ var tasks = {
       }))
       .pipe(rename({ extname: '.min.css' }))
       .pipe(gulp.dest(path.dist))
-      .on('end', done);
   },
 
   js: function (done) {

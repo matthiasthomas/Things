@@ -1,11 +1,11 @@
 angular.module('app').config(function ($stateProvider) {
-    $stateProvider.state('app.home', {
+    $stateProvider.state('app.tab.home', {
 		url: '/home',
 		views: {
-			'menuContent': {
+			'app-tab-home': {
 				templateUrl: 'src/home/home.html',
 				controller: 'HomeCtrl'
 			}
 		}
-	});
+	})
 });

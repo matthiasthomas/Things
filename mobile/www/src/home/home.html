@@ -1,0 +1,29 @@
+<ion-view view-title="Home" title="Home" id="home">
+  <!--  <div class="bar bar-header bar-stable">
+
+    <h1 class="title">Things</h1>
+    <button class="button button-icon button-clear" ui-sref="map">
+      <i class="icon ion-map"></i>
+    </button>
+
+  </div>-->
+  <search-effect class="search ">
+    <label class="item item-input">
+      <i class="icon ion-search stable placeholder-icon"></i>
+      <input type="text" placeholder="Search">
+    </label>
+  </search-effect>
+
+  <ion-content>
+    <!--class="has-header padding"-->
+    <ion-list>
+      <ion-item class="item-thumbnail" ng-repeat="thing in things" href="#/app/things/{{thing.id}}" style="background: url('{{thing.img}}');">
+        <img src="cover.jpg">
+        <h2>{{thing.title}}</h2>
+        <p>{{thing.description}}</p>
+      </ion-item>
+    </ion-list>
+
+
+  </ion-content>
+</ion-view>

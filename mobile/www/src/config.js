@@ -37,3 +37,5 @@ angular.module('app').value('$config', {
 		}
 	}
 });
+angular.module('lodash', []).constant('_', window._);
+angular.module('classie', []).constant('classie', window.classie);

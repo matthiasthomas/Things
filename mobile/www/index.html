@@ -11,7 +11,10 @@
 
     <!-- ionic/angularjs js -->
     <script src="lib/ionic/js/ionic.bundle.js"></script>
-
+    
+    <script src="lib/lodash/lodash.min.js"></script>
+    <script src="lib/classie/classie.js"></script>
+    
     <!-- cordova script (this will be a 404 during development) -->
     <script src="lib/ngCordova/dist/ng-cordova.js"></script>
     <script src="cordova.js"></script>
@@ -22,6 +25,6 @@
   </head>
 
   <body ng-app="app">
-    <ion-nav-view></ion-nav-view> <!--ng-view / ui-view-->
+    <ion-nav-view class="margin-top"></ion-nav-view> <!--ng-view / ui-view-->
   </body>
 </html>

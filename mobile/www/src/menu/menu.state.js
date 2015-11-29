@@ -5,4 +5,5 @@ angular.module('app').config(function ($stateProvider) {
         templateUrl: 'src/menu/menu.html',
         controller: 'MenuCtrl'
     });
+
 });

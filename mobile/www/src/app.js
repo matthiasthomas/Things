@@ -1,7 +1,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('app', ['ionic', 'ngCordova'])
+angular.module('app', ['ionic', 'ngCordova', 'lodash', 'classie'])
 
   .run(function ($ionicPlatform, $cordovaKeyboard, $cordovaDevice, $state) {
     $ionicPlatform.ready(function () {      
@@ -11,13 +11,7 @@ angular.module('app', ['ionic', 'ngCordova'])
       // least on iOS. It's a dead giveaway that an app is using a Web View. However, it's sometimes
       // useful especially with forms, though we would prefer giving the user a little more room
       // to interact with the app.
-      /*
-      if (window.cordova && window.cordova.plugins.Keyboard) {
-        cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-        cordova.plugins.Keyboard.disableScroll(true);
-      }
-      */
-
+      
       if (ionic.Platform.isWebView()) {
         // $cordovaKeyboard
         $cordovaKeyboard.hideAccessoryBar(true);
@@ -49,12 +43,14 @@ angular.module('app', ['ionic', 'ngCordova'])
   .config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpProvider) {
     // disable ionic scroll for native scroll
     //$ionicConfigProvider.scrolling.jsScrolling(true);
+    
     // disable ionic tansition animation 
     //$ionicConfigProvider.views.transition('none');
     
     // If we go to a URL that ui-router doesn't have registered, go to the "/" url.
-    $urlRouterProvider.otherwise('/app/home');
+    $urlRouterProvider.otherwise('/app/tab/home');
     
+    // $http defaults options
     //    $httpProvider.defaults.withCredentials = true;
     //    $httpProvider.defaults.useXDomain = true;
     //    delete $httpProvider.defaults.headers.common['X-Requested-With'];

@@ -18,18 +18,20 @@ $dark:                            #444 !default;
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
 
+$blue: #3494CC;
 
 /*---------*\
     Import
 /*---------*/
-// Include all of Ionic
-@import "www/lib/ionic/scss/ionic";
+@import "compass";
 
-//@import "compass";
-@import "_mixins";
-@import "www/src/home/home";
-@import "www/src/map/map";
-@import "www/src/menu/menu";
+// Include all of Ionic
+@import "../www/lib/ionic/scss/ionic";
+@import "_mixins.scss";
+@import "../www/src/home/home.scss";
+@import "../www/src/map/map.scss";
+@import "../www/src/menu/menu.scss";
+@import "../www/src/module/module.scss";
 
 
 /*---------*\
@@ -55,6 +57,23 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 
 * {
   box-sizing: border-box;
+}
+
+.item-content {
+      background-color: transparent!important;
+}
+
+// View
+.pane, .view {
+  background-color: #f5f5f5;
+}
+// Header
+.bar-stable .button.button-clear {
+  color:#fff;
+}
+
+.bar.bar-stable .title {
+  color:#fff;
 }
 
 
